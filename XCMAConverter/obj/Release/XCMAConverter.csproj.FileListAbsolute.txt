@@ -1,0 +1,6 @@
+C:\Users\Mathieu\source\repos\XCMAConverter\XCMAConverter\bin\Release\XCMAConverter.exe.config
+C:\Users\Mathieu\source\repos\XCMAConverter\XCMAConverter\bin\Release\XCMAConverter.exe
+C:\Users\Mathieu\source\repos\XCMAConverter\XCMAConverter\bin\Release\XCMAConverter.pdb
+C:\Users\Mathieu\source\repos\XCMAConverter\XCMAConverter\obj\Release\XCMAConverter.csproj.CoreCompileInputs.cache
+C:\Users\Mathieu\source\repos\XCMAConverter\XCMAConverter\obj\Release\XCMAConverter.exe
+C:\Users\Mathieu\source\repos\XCMAConverter\XCMAConverter\obj\Release\XCMAConverter.pdb
