@@ -197,6 +197,8 @@ namespace XCMAConverter.Level5.Camera
                                 camDataWriter.Write((short)CamValues[i].ElementAt(j).Key);
                             }
 
+                            camDataWriter.WriteAlignment(4);
+
                             camDataStartOffset = camDataWriter.Position;
 
                             for (int j = 0; j < CamValues[i].Values.Count; j++)
