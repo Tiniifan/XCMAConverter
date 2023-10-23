@@ -32,12 +32,6 @@ namespace XCMAConverter.Level5.Compression
             }
         }
 
-        public static int GetCompressSize(int size)
-        {
-            return (size >> 3) | (size << 5) | (size << 13) | (size << 21);
-        }
-
-
         public static byte[] Decompress(byte[] data)
         {
             var sizeMethodBuffer = data.Take(4).ToArray();

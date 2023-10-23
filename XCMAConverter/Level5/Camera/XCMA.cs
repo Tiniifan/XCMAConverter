@@ -8,6 +8,7 @@ using System.Globalization;
 using XCMAConverter.Level5.Compression;
 using XCMAConverter.Tools;
 using XCMAConverter.Level5.Compression.NoCompression;
+using XCMAConverter.Level5.Compression.LZ10;
 
 namespace XCMAConverter.Level5.Camera
 {
@@ -29,32 +30,10 @@ namespace XCMAConverter.Level5.Camera
 
                 HashName = header2.Hash;
 
-                for (int i = 0; i <4; i++)
-                {
-                    CamValues.Add(i, new Dictionary<int, float[]>());
-
-                    XCMASupport.CameraHeader camHeader = data.ReadStruct<XCMASupport.CameraHeader>();
-
-                    using (BinaryDataReader camData = new BinaryDataReader(Compressor.Decompress(data.GetSection(camHeader.CameraDataLength - camHeader.CameraDataOffset))))
-                    {
-                        byte unk1 = camData.ReadValue<byte>();
-                        byte unk2 = camData.ReadValue<byte>();
-                        byte framesCount = camData.ReadValue<byte>();
-                        byte unk3 = camData.ReadValue<byte>();
-
-                        int[] framesIndexes = new int[framesCount];
-                        for (int j = 0; j < framesCount; j++)
-                        {
-                            framesIndexes[j] = camData.ReadValue<short>();
-                        }
-
-                        camData.Seek((uint)camHeader.CameraStartDataOffset);
-                        for (int k = 0; k < framesCount; k++)
-                        {
-                            CamValues[i].Add(framesIndexes[k], camData.ReadMultipleStruct<float>(4).ToArray());
-                        }
-                    }
-                }
+                ReadCamData(data, 3);
+                ReadCamData(data, 3);
+                ReadCamData(data, 1);
+                ReadCamData(data, 1);
             }
         }
 
@@ -102,6 +81,35 @@ namespace XCMAConverter.Level5.Camera
             }
 
             return maxKey;
+        }
+
+        private void ReadCamData(BinaryDataReader data, int valuesCount)
+        {
+            int index = CamValues.Keys.Count();
+
+            CamValues.Add(index, new Dictionary<int, float[]>());
+
+            XCMASupport.CameraHeader camHeader = data.ReadStruct<XCMASupport.CameraHeader>();
+
+            using (BinaryDataReader camData = new BinaryDataReader(Compressor.Decompress(data.GetSection(camHeader.CameraDataLength - camHeader.CameraDataOffset))))
+            {
+                byte unk1 = camData.ReadValue<byte>();
+                byte unk2 = camData.ReadValue<byte>();
+                byte framesCount = camData.ReadValue<byte>();
+                byte unk3 = camData.ReadValue<byte>();
+
+                int[] framesIndexes = new int[framesCount];
+                for (int j = 0; j < framesCount; j++)
+                {
+                    framesIndexes[j] = camData.ReadValue<short>();
+                }
+
+                camData.Seek((uint)camHeader.CameraStartDataOffset);
+                for (int k = 0; k < framesCount; k++)
+                {
+                    CamValues[index].Add(framesIndexes[k], camData.ReadMultipleStruct<float>(valuesCount).ToArray());
+                }
+            }
         }
 
         public void Save(string fileName)
@@ -193,7 +201,7 @@ namespace XCMAConverter.Level5.Camera
 
                             for (int j = 0; j < CamValues[i].Values.Count; j++)
                             {
-                                for (int k = 0; k < 4; k++)
+                                for (int k = 0; k < CamValues[i].ElementAt(j).Value.Count(); k++)
                                 {
                                     camDataWriter.WriteStruct<float>(CamValues[i].ElementAt(j).Value[k]);
                                 }
